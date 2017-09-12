@@ -18,6 +18,17 @@ typedef struct _node {
 	size_t qtde;
 } STR;
 
+typedef struct _root {
+	struct _node * raiz;
+	
+} ARVORE;
+
+typedef struct node {
+	char tipo;
+	struct _node * filho_dir;
+	struct _node * filho_esq;
+}NODO;
+
 //asd.exe -p caminho_conte -o cominhbo_saida -p
 
 void quickSort(STR  * vet, int ini, int fim) {
@@ -59,6 +70,7 @@ int strequal(char * str1, char * str2){
 }
 
 // char *argv[]    argv[i]                (vet[])   (vet)   (&vet[0])
+//WIP
 int id_op(int argc, char ** argv, char src_path[], char out_path[]){
 	int i;
 	for(i = 1; i < argc; i++){
@@ -123,11 +135,6 @@ int main(int argc, char ** argv) {
 		printf("tipo: %c, qtde: %d\n", liso[i].tipo, liso[i].qtde);
 
 	}
-	
-	printf("A saida foi %d, \n", 	id_op(argc, argv , src_path, out_path));
-
-			printf("O caminho de entrada eh %s \n", src_path);
-			printf("O caminho de saida eh %s \n", out_path);
 	system("PAUSE");
 	return 0;
 
