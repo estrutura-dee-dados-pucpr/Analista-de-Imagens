@@ -1,35 +1,36 @@
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#define COUNT 10
 #define PATH ""
-#define COMPILE_OP 1
-#define DECOMPILE_OP 2
-#define OUTPUT_FLAG "-o"
-#define INPUT_FLAG "-p"
-#define COMPILE_FLAG "-c"
-#define DECOMPILE_FLAG "-d"
 
-typedef struct _node {
+
+
+typedef struct asd {
 	char tipo;
 	size_t qtde;
 } STR;
+0
 
-typedef struct _root {
-	struct _node * raiz;
-	
-} ARVORE;
+/*typedef struct _node{
+	char data;
+	struct _node * esq
+	struct _node * dir;	
+}NODE;*/
 
-typedef struct node {
-	char tipo;
-	struct _node * filho_dir;
-	struct _node * filho_esq;
-}NODO;
+typedef struct No{
+	int dado;
+	struct No * esq;
+	struct No * dir;
+}No;
 
-//asd.exe -p caminho_conte -o cominhbo_saida -p
+typedef struct abb
+{
+	struct No *raiz;
+}abb;
 
 void quickSort(STR  * vet, int ini, int fim) {
 	int ph = ini, i, i2;
@@ -43,7 +44,7 @@ void quickSort(STR  * vet, int ini, int fim) {
 				pt[i2] = pt[i2 - 1];
 				i2--;
 			}
-			pt[i2]= k;
+			pt[i2] = k;
 			ph++;
 		}
 
@@ -53,60 +54,104 @@ void quickSort(STR  * vet, int ini, int fim) {
 			quickSort(pt, ph + 1, fim);
 	}
 }
+/**NODE * create_node(char dado){
+	NODE * res = NULL;
+	 res = (NODE *) malloc(sizeof(NODE));
+	 
+	 if(res == NULL){
+	 	printf("BO NO MALLOC");
+	 	exit(1);
+	 }
+	 
+	 res -> data = dado;
+	 return res;
+	*/
 
-char * malloc_string(int size){
-	char * res = (char * )malloc( (size + 1) * sizeof(char)) ;  //realloc
-	res[strlen(res)] = '\0';
-	return res;
-	
-}
 
-int strequal(char * str1, char * str2){
-	int i;
-	for(i = 0; i < strlen(str1); i++)	
-		if(str1[i] != str2[i])
-			return 0;	
-	return 1;
-}
+No *insere_elemento(abb *arvore, int e){
+	No *p = (No*)malloc(sizeof(No));
+	No *q = arvore->raiz;
+	No *pai;
 
-// char *argv[]    argv[i]                (vet[])   (vet)   (&vet[0])
-//WIP
-int id_op(int argc, char ** argv, char src_path[], char out_path[]){
-	int i;
-	for(i = 1; i < argc; i++){
-		if(strequal(argv[i], INPUT_FLAG)){
-			//src_path = malloc_string(strlen(argv[i+ 1]) );
-			strcpy(src_path, argv[i+1]);
-			printf("O caminho de entrada e %s\n", src_path);
-			//printf ("Endereco de src_path: %p ", &src_path);
-		}else if(strequal(argv[i], OUTPUT_FLAG)){
-			//out_path = malloc_string(strlen(argv[i+ 1] ) );
-			strcpy(out_path, argv[i+1]);
-			printf("O caminho de saida e %s\n", out_path);
-		}else if(strequal(argv[i], COMPILE_FLAG)){
-			return COMPILE_OP;
-		}else if(strequal(argv[i], DECOMPILE_FLAG)){
-			return DECOMPILE_OP;
+	if(arvore->raiz == NULL)
+	{
+		
+printf("AQUI");
+		p->dado = e;
+		p->dir = NULL;
+		p->esq = NULL;
+		arvore->raiz = p;
+		return 0;
+	}else{
+		while(q != NULL){
+			pai = q;
+			if(e < q->dado)	
+				q = q->esq;	
+			else
+				q = q->dir;
+		
+		}
+		
+		if(e < pai->dado)
+		{
+			p->dir = NULL;
+			p->esq = NULL;
+			pai->esq = p;
+			p->dado = e;
+		}
+		else
+		{	
+			p->dir = NULL;
+			p->esq = NULL;
+			pai->dir = p;	
+			p->dado = e;
 		}
 	}
-	return -1;
 	
+	return 0;
+}void print2DUtil(No *root, int space){
+    // Base case
+    if (root == NULL)
+        return;
+ 
+    // Increase distance between levels
+    space += COUNT;
+ 
+    // Process right child first
+    print2DUtil(root->dir, space);
+ 
+    // Print current node after space
+    // count
+    printf("\n");
+    for (int i = COUNT; i < space; i++)
+        printf(" ");
+    printf("%d\n", root->dado);
+ 
+    // Process left child
+    print2DUtil(root->esq, space);
 }
 
-int main(int argc, char ** argv) {
+void imprime_preordem(No *raiz){
+	if(raiz != NULL)
+	{
+		printf("  %c  ",raiz->dado);
+		imprime_preordem(raiz->esq);
+		imprime_preordem(raiz->dir);
+	}
+}
+
+
+int main() {
 	int * aparicoes = (int *) calloc(255 , sizeof(int));
 	STR * liso;
 	FILE * file = fopen(PATH, "rb");
 	char * TESTE_STRING = "6AAAAAA 8BBBBBBBB 9CCCCCCCCC 3EEE 2KK 1A";
-	char src_path[100];// = NULL; // malloc 200
-	char out_path[100];// = NULL;
 	int i = 0, j = 0, k = 0;
+	abb  arvore;
 	
-	printf ("Endereco de src_path: %p ", &src_path);
-
-	for (i = 0; i < strlen(TESTE_STRING); i++)
+	for (i = 0; i < strlen(TESTE_STRING); i++) 
 		aparicoes[TESTE_STRING[i]]++;
-
+	
 
 	for (i = 0; i < 255; i++)
 		if (aparicoes[i] != 0)
@@ -125,20 +170,29 @@ int main(int argc, char ** argv) {
 
 	for (i = 0; i < j; i++) {
 		printf("tipo: %c, qtde: %d\n", liso[i].tipo, liso[i].qtde);
-	//	printf("erro");
 	}
 
 	quickSort(liso, 0, j);
-	printf("\n\nAFTER quicksort\n\n");
+
+	
+printf("\n\nAFTER quicksort\n\n"); 
 	for (i = 0; i < j; i++) {
-
 		printf("tipo: %c, qtde: %d\n", liso[i].tipo, liso[i].qtde);
-
 	}
+	
+	for(i = j - 1; i>=0;i--){
+		printf("I: %d, DADO: %c\n", i, liso[i].tipo);
+		insere_elemento(&arvore, (int)liso[i].tipo);
+	} 
+//	printf("AAAA: %c", arvore.raiz.dado);
+	printf("ARVORE INICIALIZADA:\n\n");
+	imprime_preordem(arvore. raiz);
+	
 	system("PAUSE");
 	return 0;
 
 }
+
 
 
 
