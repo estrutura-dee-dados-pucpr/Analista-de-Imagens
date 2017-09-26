@@ -1,198 +1,187 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define COUNT 10
-#define PATH ""
+typedef struct _node{
+    char data;
+    int peso;
+    struct _node * esq;
+    struct _node * dir;
+}NODE;
+
+typedef struct _element{
+    NODE * node;
+    struct _element * prox;
+}ELEMENT;
 
 
+NODE * new_node(char  data, int peso, NODE * esq, NODE * dir){
+    NODE * res = (NODE * ) malloc(sizeof(NODE));
+    res -> data = data;
+    res -> peso = peso;
+    res -> esq = esq;
+    res -> dir = dir;
 
-typedef struct asd {
-	char tipo;
-	size_t qtde;
-} STR;
-0
-
-/*typedef struct _node{
-	char data;
-	struct _node * esq
-	struct _node * dir;	
-}NODE;*/
-
-typedef struct No{
-	int dado;
-	struct No * esq;
-	struct No * dir;
-}No;
-
-typedef struct abb
-{
-	struct No *raiz;
-}abb;
-
-void quickSort(STR  * vet, int ini, int fim) {
-	int ph = ini, i, i2;
-	STR * pt = vet, k;
-
-	for (i = ini + 1; i <= fim; i++) {
-		i2 = i;
-		if (pt[i2].qtde < pt[ph].qtde) {
-			k = pt[i2];
-			while (i2 > ph) {
-				pt[i2] = pt[i2 - 1];
-				i2--;
-			}
-			pt[i2] = k;
-			ph++;
-		}
-
-		if (ph - 1 >= ini)
-			quickSort(pt, ini, ph - 1);
-		if (ph + 1 <= fim)
-			quickSort(pt, ph + 1, fim);
-	}
-}
-/**NODE * create_node(char dado){
-	NODE * res = NULL;
-	 res = (NODE *) malloc(sizeof(NODE));
-	 
-	 if(res == NULL){
-	 	printf("BO NO MALLOC");
-	 	exit(1);
-	 }
-	 
-	 res -> data = dado;
-	 return res;
-	*/
-
-
-No *insere_elemento(abb *arvore, int e){
-	No *p = (No*)malloc(sizeof(No));
-	No *q = arvore->raiz;
-	No *pai;
-
-	if(arvore->raiz == NULL)
-	{
-		
-printf("AQUI");
-		p->dado = e;
-		p->dir = NULL;
-		p->esq = NULL;
-		arvore->raiz = p;
-		return 0;
-	}else{
-		while(q != NULL){
-			pai = q;
-			if(e < q->dado)	
-				q = q->esq;	
-			else
-				q = q->dir;
-		
-		}
-		
-		if(e < pai->dado)
-		{
-			p->dir = NULL;
-			p->esq = NULL;
-			pai->esq = p;
-			p->dado = e;
-		}
-		else
-		{	
-			p->dir = NULL;
-			p->esq = NULL;
-			pai->dir = p;	
-			p->dado = e;
-		}
-	}
-	
-	return 0;
-}void print2DUtil(No *root, int space){
-    // Base case
-    if (root == NULL)
-        return;
- 
-    // Increase distance between levels
-    space += COUNT;
- 
-    // Process right child first
-    print2DUtil(root->dir, space);
- 
-    // Print current node after space
-    // count
-    printf("\n");
-    for (int i = COUNT; i < space; i++)
-        printf(" ");
-    printf("%d\n", root->dado);
- 
-    // Process left child
-    print2DUtil(root->esq, space);
+    return res;
 }
 
-void imprime_preordem(No *raiz){
-	if(raiz != NULL)
-	{
-		printf("  %c  ",raiz->dado);
-		imprime_preordem(raiz->esq);
-		imprime_preordem(raiz->dir);
-	}
-}
-
-
-int main() {
+ELEMENT  * init_alfabeto(char * stream, int * len, ELEMENT * * ancora, int index){
 	int * aparicoes = (int *) calloc(255 , sizeof(int));
-	STR * liso;
-	FILE * file = fopen(PATH, "rb");
-	char * TESTE_STRING = "6AAAAAA 8BBBBBBBB 9CCCCCCCCC 3EEE 2KK 1A";
-	int i = 0, j = 0, k = 0;
-	abb  arvore;
-	
-	for (i = 0; i < strlen(TESTE_STRING); i++) 
-		aparicoes[TESTE_STRING[i]]++;
-	
+	//printf("NEW LOOP, Index: %d\n", index);
+    int i, j = 0, k = 0;
+    ELEMENT * res;
+    NODE * res_node;
+	for (i = 0; i < strlen(stream); i++)
+		aparicoes[stream[i]]++;
 
 	for (i = 0; i < 255; i++)
 		if (aparicoes[i] != 0)
-			j++;
+			(*len)++;
+        else
+            aparicoes[i] == 0;
 
-	liso = (STR * ) malloc(sizeof(STR) * j);
-	if (liso == NULL)
-		printf("ERRO NO MALLOC");
-	for (i = 0; i < 256; i++) {
-		if (aparicoes[i] != 0) {
-			liso[k].tipo = (char) i;
-			liso[k].qtde = aparicoes[i];
-			k++;
-		}
-	}
+    res = (ELEMENT * ) malloc(sizeof(ELEMENT) );
 
-	for (i = 0; i < j; i++) {
-		printf("tipo: %c, qtde: %d\n", liso[i].tipo, liso[i].qtde);
-	}
+    do{
+       // printf("Index: %d\n ", index);
+        index++;
+        if(index >= 256)
+            return ancora;
+    }while(aparicoes[index] == 0);
 
-	quickSort(liso, 0, j);
+    res -> node = new_node( (char) index, aparicoes[index], NULL, NULL);
 
-	
-printf("\n\nAFTER quicksort\n\n"); 
-	for (i = 0; i < j; i++) {
-		printf("tipo: %c, qtde: %d\n", liso[i].tipo, liso[i].qtde);
-	}
-	
-	for(i = j - 1; i>=0;i--){
-		printf("I: %d, DADO: %c\n", i, liso[i].tipo);
-		insere_elemento(&arvore, (int)liso[i].tipo);
-	} 
-//	printf("AAAA: %c", arvore.raiz.dado);
-	printf("ARVORE INICIALIZADA:\n\n");
-	imprime_preordem(arvore. raiz);
-	
-	system("PAUSE");
-	return 0;
+    //printf("Adicionado NODE com data %c e peso %d\n", res -> node -> data, res -> node -> peso);
+    res ->prox = *ancora;
+    *ancora = res;
+
+    return init_alfabeto(stream, len, ancora, index);
+}
+
+//Inicia a lista encadeada
+void init_list(ELEMENT * * ancora){
+    * ancora = NULL;
+}
+
+//Imprime a lsita encadeada
+void prt(ELEMENT * res){
+
+    char  c = (res -> node -> data);
+    printf("C: %c, P: %d\n", c, res -> node -> peso);
+    if(res ->prox != NULL)
+    prt(res -> prox);
+}
+
+void Tree_inOrder(NODE *n){
+
+     if(n==NULL)
+
+           return;
+
+     Tree_inOrder(n->esq);
+
+     printf("Peso: %d, Data: %c\n", n->peso, n->data);
+
+     Tree_inOrder(n->dir);
 
 }
 
+//MergeSort do stackOverflow
+ELEMENT *sort(ELEMENT *lst) {
+    if (!lst || !lst-> prox)
+         return lst;
+   ELEMENT *q = lst, *p = lst-> prox-> prox;
+  while (p && p-> prox) {
+    q = q-> prox;
+    p = p-> prox-> prox;
+  }
+   ELEMENT *mid = q-> prox;
+  q-> prox = NULL;
+   ELEMENT *fst = sort(lst), *snd = sort(mid);
+   ELEMENT rtn[1], *tail = rtn;
+  while (fst && snd) {
+    if (fst->node -> peso < snd->node -> peso) {
+      tail-> prox = fst;
+      tail = fst;
+      fst = fst-> prox;
+    } else {
+      tail-> prox = snd;
+      tail = snd;
+      snd = snd-> prox;
+    }
+  }
+  while (fst) {
+    tail-> prox = fst;
+    tail = fst;
+    fst = fst-> prox;
+  }
+  while (snd) {
+    tail-> prox = snd;
+    tail = snd;
+    snd = snd-> prox;
+  }
+  tail-> prox = NULL;
+  return rtn-> prox;
+}
 
 
+NODE * init_tree(ELEMENT * ancora){
+    int peso_res = ancora ->prox->node->peso + ancora->node->peso;
+
+        NODE * nNode = new_node(NULL, peso_res, ancora ->prox->node, ancora->node);
+        ancora -> prox -> node = nNode;
+        //deleteNode(ancora);
+        ancora = ancora -> prox;
+        printf("->Novo alfabeto: \n");
+        ancora = sort(ancora);
+        prt(ancora);
+        if(ancora -> prox == NULL)
+            return ancora->node;
+    return(init_tree(ancora));
+}
+
+void print2DUtil(NODE *root, int space)
+{
+    int i;
+    // Base case
+    if (root == NULL)
+        return;
+
+    // Increase distance between levels
+    space += 10;
+
+    // Process right child first
+    print2DUtil(root->dir, space);
+
+    // Print current node after space
+    // count
+    printf("\n");
+    for (i = 10; i < space; i++)
+        printf(" ");
+    printf("C: %c P: %d\n", root->data, root -> peso);
+
+    // Process left child
+    print2DUtil(root->esq, space);
+}
+int main(){
+    ELEMENT * alfabeto;
+    NODE * raiz;
+	char * TESTE_STRING = "abracadabra";//"6AAAAAA 8BBBBBBBB 9CCCCCCCCC 3EEE 2KK 1A";
+    int lenght = 0;
+    init_list(&alfabeto);
+    init_alfabeto(TESTE_STRING, &lenght, &alfabeto, 0);
+   // prt(alfabeto);
+    printf("Sorted: \n");
+    alfabeto=sort(alfabeto);
+    prt(alfabeto);
+    //deleteNode(&alfabeto, 2);
+   // printf("A\n");
+    //prt(alfabeto);
+    raiz = init_tree(alfabeto);
+
+  //  Tree_inOrder(raiz);
+
+  printf("2D: \n");
+  print2DUtil(raiz, 0);
+}
 
